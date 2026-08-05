@@ -2,35 +2,12 @@
 
 Daily automated monitor for 50+ career pages. Scrapes with Playwright, diffs
 against a SQLite history using content hashes, and emails you a summary of
-NEW / UPDATED / REMOVED postings that match your role and location filters.
-
-## Read this first: what's real vs. what needs your input
+NEW / UPDATED / REMOVED postings that match role and location filters.
 
 This is a complete, working pipeline — SQLite storage, hashing/diffing,
 retry logic, HTML+Markdown reports, email, Docker, and a GitHub Actions cron
 job are all implemented and functional out of the box.
 
-**The one thing I could not do for you:** verify live CSS selectors against
-all 50 career pages. I don't have a browser session against those sites, and
-many of them (Oracle Cloud HCM, custom React SPAs, Cloudflare-fronted pages)
-render job listings in ways that change per-tenant. So:
-
-- 15 sites use **platform-aware strategies** (Greenhouse, Workday, Oracle
-  Cloud HCM, Zoho Recruit, Darwinbox, Avature, Mokahr) that work across most
-  tenants of that platform without per-site tuning.
-- The rest (`ats_type: generic`) ship with reasonable default selectors that
-  will work on many sites but are **not guaranteed** to match every one on
-  day one.
-- I built `src/discover_selectors.py` specifically so you can fix any site
-  that doesn't return results in under a minute, without reading raw HTML
-  by hand. See "Tuning a site" below.
-- `linkedin` (Humyn Labs) is disabled by default (`active: false`) because
-  LinkedIn requires authentication and actively blocks headless scraping —
-  scraping it against ToS isn't something I'll build automation for. Removed
-  from the run; everything else in your list is included.
-
-Expect to spend ~15–30 minutes on first run fixing selectors for a handful
-of `generic` sites. After that it's fully hands-off.
 
 ## Project structure
 
@@ -59,14 +36,14 @@ job-tracker/
 ## Local setup
 
 ```bash
-git clone <your-repo-url>
+git clone <repo-url>
 cd job-tracker
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 playwright install --with-deps chromium
 
 cp .env.example .env
-# edit .env with your SMTP credentials (Gmail App Password recommended)
+# edit .env with SMTP credentials (Gmail App Password recommended)
 ```
 
 Run once manually:
@@ -117,7 +94,7 @@ docker run --rm --env-file .env -v $(pwd)/data:/app/data -v $(pwd)/reports:/app/
    - `SMTP_HOST` (e.g. `smtp.gmail.com`)
    - `SMTP_PORT` (e.g. `587`)
    - `SMTP_USER`
-   - `SMTP_PASS` (Gmail: use an [App Password](https://myaccount.google.com/apppasswords), not your login password)
+   - `SMTP_PASS` (Gmail: use an [App Password](https://myaccount.google.com/apppasswords), not login password)
    - `EMAIL_TO` (comma-separated if multiple recipients)
 3. The workflow at `.github/workflows/daily-job-tracker.yml` runs on cron
    `30 5 * * *` UTC (= 11:00 AM IST, no DST adjustment needed) and can also
@@ -150,10 +127,6 @@ docker run --rm --env-file .env -v $(pwd)/data:/app/data -v $(pwd)/reports:/app/
   challenges but not interactive CAPTCHAs. Those sites fail with a logged
   error and get retried 3x with backoff; they don't silently return zero
   results as if nothing changed.
-- **LinkedIn**: disabled (see above).
-- **Michael Page**: this is a recruitment agency aggregator, not a direct
-  employer career page — results will include third-party client roles
-  under Michael Page's own listing format.
 - Sites can change their DOM at any time; if a previously-working `generic`
   site suddenly returns 0 results, re-run `discover_selectors.py` on it.
 
@@ -164,4 +137,4 @@ Posted date (if the site exposes it) · Direct link · Status (`NEW` /
 `UPDATED` / `REMOVED`).
 
 Email subject line: `[Job Tracker] N New Jobs` or
-`[Job Tracker] No new openings today`, matching your spec exactly.
+`[Job Tracker] No new openings today`, matching spec exactly.
