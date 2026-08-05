@@ -1,0 +1,75 @@
+name: Daily Job Tracker
+
+on:
+  schedule:
+    # 11:00 IST = 05:30 UTC (IST has no DST, so this offset is constant)
+    - cron: "30 5 * * *"
+  workflow_dispatch: {}   # allows manual "Run workflow" button for testing
+
+permissions:
+  contents: read
+
+concurrency:
+  group: job-tracker-run
+  cancel-in-progress: false   # never cancel a run mid-scrape; let it finish or fail cleanly
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          playwright install --with-deps chromium
+
+      # Persist data/job_tracker.db (and logs) across scheduled runs.
+      # restore-keys falls back to the most recent cache if today's exact
+      # key hasn't been written yet; we always re-save at the end.
+      - name: Restore previous job database
+        uses: actions/cache@v4
+        with:
+          path: |
+            data
+          key: job-tracker-db-${{ github.run_id }}
+          restore-keys: |
+            job-tracker-db-
+
+      - name: Run job tracker
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+        run: python -m src.main
+
+      - name: Upload reports as workflow artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: job-tracker-reports-${{ github.run_id }}
+          path: |
+            reports/
+            logs/
+          retention-days: 30
+
+      # actions/cache has no "always save" hook tied to the restore step,
+      # so we explicitly save the DB again post-run to persist tonight's state.
+      - name: Save updated job database
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            data
+          key: job-tracker-db-${{ github.run_id }}

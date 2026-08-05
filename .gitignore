@@ -1,0 +1,11 @@
+.env
+data/*.db
+logs/*.log
+reports/*.html
+reports/*.md
+reports/discover_*.png
+reports/discover_*.html
+__pycache__/
+*.pyc
+.venv/
+venv/

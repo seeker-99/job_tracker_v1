@@ -1,0 +1,420 @@
+# ==========================================================================
+# SITE REGISTRY
+# ==========================================================================
+# ats_type tells the scraper which extraction strategy to use:
+#   greenhouse        -> job-boards.greenhouse.io / embedded greenhouse boards
+#   workday            -> *.myworkdayjobs.com
+#   oracle_cloud_hcm    -> *.fa.ocs.oraclecloud.com
+#   zoho_recruit        -> *.zohorecruit.com / .in
+#   darwinbox           -> *.darwinbox.in / .com
+#   avature             -> *.avature.net
+#   generic             -> falls back to config-driven CSS selectors below,
+#                          which are BEST-GUESS DEFAULTS and MUST be verified
+#                          with `python -m src.discover_selectors <site_id>`
+#                          before you rely on them. See README "Tuning selectors".
+#
+# `active: true/false` lets you disable a broken/inactive site without
+# deleting its config (per your "ignore inactive sites" requirement).
+# ==========================================================================
+
+defaults:
+  wait_strategy: networkidle       # networkidle | load | domcontentloaded
+  wait_timeout_ms: 45000
+  extra_wait_ms: 2000              # settle time for client-side rendering
+  retry_attempts: 3
+  job_card_selector: "a[href*='job'], a[href*='career'], li[class*='job'], div[class*='job-card'], tr[class*='job']"
+  title_selector: null             # null = use job_card text itself
+  location_selector: null
+  link_attr: "href"
+
+roles:
+  priority_keywords:
+    - "data scientist"
+    - "senior data scientist"
+    - "machine learning engineer"
+    - "ml engineer"
+    - "ai engineer"
+    - "applied scientist"
+    - "research engineer"
+    - "computer vision"
+    - "deep learning"
+    - "llm engineer"
+    - "robotics engineer"
+    - "autonomous systems"
+    - "autonomous driving"
+    - "perception"
+    - "planning"
+    - "localization"
+    - "mapping"
+    - "controls engineer"
+    - "embedded ai"
+    - "software engineer"
+    - "software development engineer"
+    - "sde"
+    - "backend engineer"
+    - "python engineer"
+    - "c++"
+    - "ros2"
+    - "ros "
+    - "data engineer"
+    - "analytics engineer"
+    - "decision scientist"
+    - "mlops"
+    - "simulation"
+    - "optimization"
+    - "algorithm engineer"
+  include_keywords:
+    - "early career product manager"
+    - "associate product manager"
+    - "apm"
+    - "product manager i"
+    - "product manager ii"
+    - "product owner"
+  exclude_keywords:
+    - "human resources"
+    - "hr business partner"
+    - "sales executive"
+    - "account executive"
+    - "finance analyst"
+    - "accounts payable"
+    - "marketing manager"
+    - "legal counsel"
+    - "recruiter"
+  experience_years: [3, 7]
+
+locations:
+  country_default: "India"
+  preferred_cities:
+    - "bangalore"
+    - "bengaluru"
+    - "hyderabad"
+    - "chennai"
+    - "pune"
+    - "gurgaon"
+    - "gurugram"
+    - "noida"
+    - "remote india"
+    - "india"
+
+sites:
+  - id: pi_website
+    name: "Physical Intelligence"
+    url: "https://www.pi.website/join-us"
+    ats_type: generic
+    active: true
+
+  - id: ge_aerospace
+    name: "GE Aerospace"
+    url: "https://careers.geaerospace.com/global/en/search-results?qcountry=India"
+    ats_type: generic
+    active: true
+
+  - id: volvo_cars
+    name: "Volvo Cars"
+    url: "https://jobs.volvocars.com/search/?createNewAlert=false&q=&locationsearch=&optionsFacetsDD_department=&optionsFacetsDD_country=IN&optionsFacetsDD_customfield3="
+    ats_type: generic
+    active: true
+
+  - id: volvo_group
+    name: "Volvo Group"
+    url: "https://jobs.volvogroup.com/?locale=en_US"
+    ats_type: generic
+    active: true
+
+  - id: rtx
+    name: "RTX (Raytheon)"
+    url: "https://careers.rtx.com/global/en/search-results?keywords=india&from=50&s=1"
+    ats_type: generic
+    active: true
+
+  - id: tesla_mokahr
+    name: "Tesla (China/APAC portal)"
+    url: "https://hire-r1.mokahr.com/social-recruitment/tesla/100004142#/"
+    ats_type: mokahr
+    active: true
+    notes: "Mokahr is a Chinese ATS with heavy client-side rendering; verify India relevance manually."
+
+  - id: ather_energy
+    name: "Ather Energy"
+    url: "https://careers.atherenergy.com/jobs"
+    ats_type: generic
+    active: true
+
+  - id: uber
+    name: "Uber"
+    url: "https://jobs.uber.com/en/jobs/?countries=India"
+    ats_type: generic
+    active: true
+
+  - id: humyn_labs_linkedin
+    name: "Humyn Labs (LinkedIn)"
+    url: "https://www.linkedin.com/company/humyn-labs/jobs/"
+    ats_type: linkedin
+    active: false
+    notes: "LinkedIn requires auth and blocks headless scraping; disabled by default. See README."
+
+  - id: google_careers
+    name: "Google"
+    url: "https://www.google.com/about/careers/applications/jobs/results/?location=India&target_level=EARLY&target_level=MID&degree=BACHELORS&employment_type=FULL_TIME&sort_by=date"
+    ats_type: generic
+    active: true
+
+  - id: waymo
+    name: "Waymo"
+    url: "https://careers.withwaymo.com/jobs/search?page=1&query="
+    ats_type: generic
+    active: true
+    notes: "India country filter removed per instructions; role/location filtering still applied downstream."
+
+  - id: bosch
+    name: "Bosch"
+    url: "https://jobs.bosch.com/en?country=in&pages=1"
+    ats_type: generic
+    active: true
+
+  - id: intuit
+    name: "Intuit"
+    url: "https://jobs.intuit.com/search-jobs?orderBy=Newest&locationCountry=India"
+    ats_type: generic
+    active: true
+
+  - id: gmr
+    name: "GMR Group"
+    url: "https://gmrpl.in/career-1"
+    ats_type: generic
+    active: true
+
+  - id: abb
+    name: "ABB"
+    url: "https://careers.abb/global/en/search-results?qcountry=India"
+    ats_type: generic
+    active: true
+
+  - id: dassault_3ds
+    name: "Dassault Systemes (3DS)"
+    url: "https://www.3ds.com/careers/jobs?woc=%257B%2522country%2522%253A%255B%2522country%252FIndia%2522%255D%257D"
+    ats_type: generic
+    active: true
+
+  - id: rolls_royce
+    name: "Rolls-Royce"
+    url: "https://careers.rolls-royce.com/en/jobs?country=India&department=Engineering%7CDigital%7CInformation+Technology&jobtype=Full+time"
+    ats_type: generic
+    active: true
+
+  - id: rtx_oracle_aerospace
+    name: "Aerospace (Oracle Cloud portal)"
+    url: "https://icfcjb.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/Aerospace/jobs"
+    ats_type: oracle_cloud_hcm
+    active: true
+
+  - id: atlassian
+    name: "Atlassian"
+    url: "https://www.atlassian.com/company/careers/all-jobs"
+    ats_type: generic
+    active: true
+
+  - id: caterpillar
+    name: "Caterpillar"
+    url: "https://careers.caterpillar.com/en/jobs/"
+    ats_type: generic
+    active: true
+
+  - id: progress_rail
+    name: "Progress Rail"
+    url: "https://www.progressrail.com/en/Careers/India.index.html"
+    ats_type: generic
+    active: true
+
+  - id: dyson
+    name: "Dyson"
+    url: "https://careers.dyson.com/"
+    ats_type: generic
+    active: true
+
+  - id: adobe
+    name: "Adobe"
+    url: "https://careers.adobe.com/"
+    ats_type: workday
+    active: true
+
+  - id: thoughtworks
+    name: "Thoughtworks"
+    url: "https://www.thoughtworks.com/careers/jobs"
+    ats_type: generic
+    active: true
+
+  - id: bloomberg
+    name: "Bloomberg"
+    url: "https://bloomberg.avature.net/careers/SearchJobs/"
+    ats_type: avature
+    active: true
+
+  - id: anthropic
+    name: "Anthropic"
+    url: "https://www.anthropic.com/careers/jobs"
+    ats_type: generic
+    active: true
+
+  - id: databricks
+    name: "Databricks"
+    url: "https://www.databricks.com/company/careers/open-positions"
+    ats_type: generic
+    active: true
+
+  - id: oracle_hcm_2
+    name: "Oracle Cloud HCM (portal 2)"
+    url: "https://iawmqy.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/careers/jobs"
+    ats_type: oracle_cloud_hcm
+    active: true
+
+  - id: rippling
+    name: "Rippling"
+    url: "https://www.rippling.com/careers/open-roles"
+    ats_type: generic
+    active: true
+
+  - id: skoda_vw
+    name: "Skoda-VW India"
+    url: "https://skoda-vw.darwinbox.in/ms/candidatev2/main/careers/allJobs"
+    ats_type: darwinbox
+    active: true
+
+  - id: mastercard
+    name: "Mastercard"
+    url: "https://careers.mastercard.com/"
+    ats_type: workday
+    active: true
+
+  - id: vinfast
+    name: "VinFast"
+    url: "https://vinfast.zohorecruit.com/jobs/Careers"
+    ats_type: zoho_recruit
+    active: true
+
+  - id: deutsche_bank
+    name: "Deutsche Bank"
+    url: "https://careers.db.com/"
+    ats_type: generic
+    active: true
+
+  - id: stripe
+    name: "Stripe"
+    url: "https://stripe.com/jobs/search"
+    ats_type: generic
+    active: true
+
+  - id: alstom
+    name: "Alstom"
+    url: "https://jobsearch.alstom.com/search/"
+    ats_type: generic
+    active: true
+
+  - id: gm
+    name: "General Motors"
+    url: "https://search-careers.gm.com/en/jobs/"
+    ats_type: generic
+    active: true
+
+  - id: figure_ai
+    name: "Figure AI"
+    url: "https://www.figure.ai/careers"
+    ats_type: generic
+    active: true
+
+  - id: kpit
+    name: "KPIT"
+    url: "https://www.kpit.com/job-listing/"
+    ats_type: generic
+    active: true
+
+  - id: apple
+    name: "Apple"
+    url: "https://jobs.apple.com/en-in/search?location=india-INDC"
+    ats_type: generic
+    active: true
+
+  - id: gartner
+    name: "Gartner"
+    url: "https://jobs.gartner.com/jobs/"
+    ats_type: workday
+    active: true
+
+  - id: visa
+    name: "Visa"
+    url: "https://visa.wd5.myworkdayjobs.com/Visa"
+    ats_type: workday
+    active: true
+
+  - id: boeing
+    name: "Boeing"
+    url: "https://jobs.boeing.com/"
+    ats_type: generic
+    active: true
+
+  - id: razorpay
+    name: "Razorpay"
+    url: "https://job-boards.greenhouse.io/razorpaysoftwareprivatelimited"
+    ats_type: greenhouse
+    active: true
+
+  - id: mathworks
+    name: "MathWorks India"
+    url: "https://in.mathworks.com/company/jobs/opportunities/search"
+    ats_type: generic
+    active: false
+
+  - id: globallogic
+    name: "GlobalLogic"
+    url: "https://www.globallogic.com/career-search-page/?location=india"
+    ats_type: generic
+    active: true
+
+  - id: isuzu
+    name: "Isuzu"
+    url: "https://isuzu-g-recruit.isuzu.co.jp/UDT/search/"
+    ats_type: generic
+    active: true
+
+  - id: hrone
+    name: "HROne"
+    url: "https://career.hrone.cloud/career-portal"
+    ats_type: generic
+    active: true
+
+  - id: stryker
+    name: "Stryker"
+    url: "https://careers.stryker.com/jobs"
+    ats_type: workday
+    active: true
+
+  - id: skyroot
+    name: "Skyroot Aerospace"
+    url: "https://skyroot.zohorecruit.in/jobs/Careers"
+    ats_type: zoho_recruit
+    active: true
+
+  - id: greyorange
+    name: "GreyOrange"
+    url: "https://careers.greyorange.com/greyorange/"
+    ats_type: generic
+    active: true
+
+  - id: michael_page
+    name: "Michael Page India (agency listings)"
+    url: "https://www.michaelpage.co.in/jobs/data/india"
+    ats_type: generic
+    active: true
+    notes: "Recruitment agency aggregator, not a direct employer; results include third-party roles."
+
+  - id: greenhouse_india_all
+    name: "Greenhouse (India, all boards)"
+    url: "https://my.greenhouse.io/jobs?location=India"
+    ats_type: greenhouse
+    active: true
+
+  - id: aptiv
+    name: "Aptiv"
+    url: "https://www.aptiv.com/en/jobs/search?country=India"
+    ats_type: generic
+    active: true
