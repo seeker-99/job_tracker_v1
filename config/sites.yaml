@@ -214,8 +214,11 @@ sites:
     name: "Aerospace (Oracle Cloud portal)"
     url: "https://icfcjb.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/Aerospace/jobs"
     ats_type: generic
-    job_card_selector: "a.job-list-item__link"
+    job_card_selector: "li:has(a.job-list-item__link)"
     title_selector: "span.job-tile__title"
+    location_selector: "posting-locations span"
+    extra_wait_ms: 15000
+    wait_timeout_ms: 60000
     active: true
 
   - id: atlassian
@@ -277,9 +280,12 @@ sites:
     active: true
 
   - id: oracle_hcm_2
-    name: "Oracle Cloud HCM (portal 2)"
+    name: "Oracle Cloud HCM (portal 2) — Dell"
     url: "https://iawmqy.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/careers/jobs"
     ats_type: generic
+    job_card_selector: "li:has(a.job-list-item__link)"
+    title_selector: "span.job-tile__title"
+    location_selector: "posting-locations span"
     active: true
 
   - id: rippling
