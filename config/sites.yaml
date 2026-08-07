@@ -387,9 +387,10 @@ sites:
 
   - id: mathworks
     name: "MathWorks India"
-    url: "https://in.mathworks.com/company/jobs/opportunities/search"
+    url: "https://in.mathworks.com/company/jobs/opportunities/search?sort_origin=user&sort_order=DATE+DESC&keywords=&location%5B%5D=IN"
     ats_type: generic
-    active: false
+    job_card_selector: "a[id^='title_']"
+    active: true
 
   - id: globallogic
     name: "GlobalLogic"
