@@ -101,6 +101,11 @@ sites:
     name: "Physical Intelligence"
     url: "https://jobs.ashbyhq.com/physicalintelligence"
     ats_type: generic
+    job_card_selector: "a._container_j2da7_1"
+    title_selector: "h3.ashby-job-posting-brief-title"
+    wait_strategy: load
+    extra_wait_ms: 15000
+    wait_timeout_ms: 60000
     active: true
 
   - id: ge_aerospace
