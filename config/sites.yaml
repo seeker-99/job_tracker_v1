@@ -99,7 +99,7 @@ locations:
 sites:
   - id: pi_website
     name: "Physical Intelligence"
-    url: "https://www.pi.website/join-us"
+    url: "https://jobs.ashbyhq.com/physicalintelligence"
     ats_type: generic
     active: true
 
@@ -208,7 +208,9 @@ sites:
   - id: rtx_oracle_aerospace
     name: "Aerospace (Oracle Cloud portal)"
     url: "https://icfcjb.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/Aerospace/jobs"
-    ats_type: oracle_cloud_hcm
+    ats_type: generic
+    job_card_selector: "a.job-list-item__link"
+    title_selector: "span.job-tile__title"
     active: true
 
   - id: atlassian
@@ -220,6 +222,7 @@ sites:
   - id: caterpillar
     name: "Caterpillar"
     url: "https://careers.caterpillar.com/en/jobs/"
+    job_card_selector: "a.stretched-link.js-view-job"
     ats_type: generic
     active: true
 
@@ -271,7 +274,7 @@ sites:
   - id: oracle_hcm_2
     name: "Oracle Cloud HCM (portal 2)"
     url: "https://iawmqy.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/careers/jobs"
-    ats_type: oracle_cloud_hcm
+    ats_type: generic
     active: true
 
   - id: rippling
@@ -283,13 +286,16 @@ sites:
   - id: skoda_vw
     name: "Skoda-VW India"
     url: "https://skoda-vw.darwinbox.in/ms/candidatev2/main/careers/allJobs"
-    ats_type: darwinbox
+    ats_type: generic
+    job_card_selector: "div.job-tile"
+    title_selector: "span.job-title"
+    location_selector: "div.sub-section span"
     active: true
 
   - id: mastercard
     name: "Mastercard"
-    url: "https://careers.mastercard.com/"
-    ats_type: workday
+    url: "https://careers.mastercard.com/us/en/search-results/"
+    ats_type: generic
     active: true
 
   - id: vinfast
@@ -320,6 +326,7 @@ sites:
     name: "General Motors"
     url: "https://search-careers.gm.com/en/jobs/"
     ats_type: generic
+    job_card_selector: "a.stretched-link[href*='/jobs/jr-']"
     active: true
 
   - id: figure_ai
@@ -343,7 +350,8 @@ sites:
   - id: gartner
     name: "Gartner"
     url: "https://jobs.gartner.com/jobs/"
-    ats_type: workday
+    ats_type: generic
+    job_card_selector: "a.stretched-link[href*='/jobs/job/']"
     active: true
 
   - id: visa
@@ -386,12 +394,15 @@ sites:
     name: "HROne"
     url: "https://career.hrone.cloud/career-portal"
     ats_type: generic
+    extra_wait_ms: 10000
+    wait_timeout_ms: 60000
     active: true
 
   - id: stryker
     name: "Stryker"
     url: "https://careers.stryker.com/jobs"
-    ats_type: workday
+    job_card_selector: "a.results-list__item-title--link"
+    ats_type: generic
     active: true
 
   - id: skyroot
@@ -404,6 +415,8 @@ sites:
     name: "GreyOrange"
     url: "https://careers.greyorange.com/greyorange/"
     ats_type: generic
+    extra_wait_ms: 10000
+    wait_timeout_ms: 60000
     active: true
 
   - id: michael_page
