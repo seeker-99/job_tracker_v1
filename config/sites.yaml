@@ -119,6 +119,9 @@ sites:
     name: "Volvo Group"
     url: "https://jobs.volvogroup.com/?locale=en_US"
     ats_type: generic
+    job_card_selector: "a.job--table--row"
+    title_selector: "span.job--table--title"
+    location_selector: "span.job--table--locationItem"
     active: true
 
   - id: rtx
