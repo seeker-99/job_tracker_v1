@@ -76,12 +76,80 @@ async def _settle(page: Page, wait_strategy: str, timeout_ms: int, extra_wait_ms
     await page.wait_for_timeout(extra_wait_ms)
 
 
+# If a card has no explicit title_selector configured, try these narrower
+# candidates first (in order) before falling back to the whole card's text.
+# This avoids swallowing a full job-description blob into the title when
+# the "card" element is a large wrapper with no newline to split on.
+_TITLE_FALLBACK_SELECTORS = [
+    "h1", "h2", "h3", "h4", "h5",
+    "[class*='title' i]", "[class*='job-name' i]", "[class*='position' i]",
+    "strong", "b",
+]
+
+MAX_TITLE_LEN = 140  # safety net: a real job title is never this long
+
+
+def _clean_title(raw: str) -> str:
+    # Collapse all whitespace/newlines to single spaces, take the first
+    # sentence-like chunk, then hard-truncate as a last resort so a
+    # mis-scoped selector can never dump a whole description into the title.
+    collapsed = " ".join(raw.split())
+    first_line = raw.split("\n")[0].strip()
+    candidate = first_line if 0 < len(first_line) < len(collapsed) else collapsed
+    if len(candidate) > MAX_TITLE_LEN:
+        candidate = candidate[:MAX_TITLE_LEN].rsplit(" ", 1)[0] + "…"
+    return candidate.strip()
+
+
+async def _get_scrape_target(page: Page, site: dict):
+    """
+    Returns the Playwright object to query for job cards: either the page
+    itself, or - if this site's jobs are rendered inside an <iframe> (common
+    for embedded ATS widgets, e.g. an embedded Greenhouse/Lever board) - the
+    Frame object for that iframe. Frame has the same query_selector_all API
+    as Page, so callers don't need to know which one they got.
+
+    Configure in sites.yaml with EITHER:
+      iframe_selector: "iframe#careers-widget"       (CSS selector of the <iframe> tag)
+      iframe_url_contains: "boards.greenhouse.io"     (substring to match the iframe's src)
+    """
+    iframe_sel = site.get("iframe_selector")
+    iframe_url_contains = site.get("iframe_url_contains")
+
+    if iframe_sel:
+        try:
+            await page.wait_for_selector(iframe_sel, timeout=10000)
+        except PWTimeout:
+            logger.warning("iframe_selector '%s' never appeared on %s", iframe_sel, site["id"])
+        el = await page.query_selector(iframe_sel)
+        if el:
+            frame = await el.content_frame()
+            if frame:
+                return frame
+
+    if iframe_url_contains:
+        for f in page.frames:
+            if iframe_url_contains in (f.url or ""):
+                return f
+
+    return page
+
+
 async def generic_strategy(page: Page, site: dict, defaults: dict) -> list[RawJob]:
     card_sel = site.get("job_card_selector") or defaults["job_card_selector"]
     title_sel = site.get("title_selector") or defaults.get("title_selector")
     location_sel = site.get("location_selector") or defaults.get("location_selector")
+    # Some platforms (e.g. Phenom People, used by Adobe/Gartner/Stryker career
+    # sites) put the real job title in an element attribute rather than in
+    # visible text - e.g. aria-label="Apply Now for <Job Title>". Configure
+    # title_attr + title_attr_strip_prefix in sites.yaml to handle this.
+    title_attr = site.get("title_attr")
+    title_attr_strip_prefix = site.get("title_attr_strip_prefix", "")
 
-    cards = await page.query_selector_all(card_sel)
+    target = await _get_scrape_target(page, site)
+    base_url = getattr(target, "url", page.url)
+
+    cards = await target.query_selector_all(card_sel)
     jobs = []
     seen_links = set()
     for card in cards:
@@ -92,17 +160,37 @@ async def generic_strategy(page: Page, site: dict, defaults: dict) -> list[RawJo
             href = await inner.get_attribute("href") if inner else None
         if not href:
             continue
-        link = urljoin(page.url, href)
+        link = urljoin(base_url, href)
         if link in seen_links:
             continue
         seen_links.add(link)
 
-        if title_sel:
+        title = ""
+        if title_attr:
+            raw_attr = (await card.get_attribute(title_attr)) or ""
+            if title_attr_strip_prefix and raw_attr.startswith(title_attr_strip_prefix):
+                raw_attr = raw_attr[len(title_attr_strip_prefix):]
+            title = raw_attr.strip()
+
+        if not title and title_sel:
             title_el = await card.query_selector(title_sel)
-            title = (await title_el.inner_text()).strip() if title_el else (await card.inner_text()).strip()
-        else:
+            if title_el:
+                title = (await title_el.inner_text()).strip()
+
+        if not title:
+            # Try narrower fallback selectors before resorting to full card text
+            for fallback_sel in _TITLE_FALLBACK_SELECTORS:
+                el = await card.query_selector(fallback_sel)
+                if el:
+                    text = (await el.inner_text()).strip()
+                    if text:
+                        title = text
+                        break
+
+        if not title:
             title = (await card.inner_text()).strip()
-        title = title.split("\n")[0].strip()
+
+        title = _clean_title(title)
 
         location = ""
         if location_sel:
@@ -180,12 +268,10 @@ async def oracle_cloud_hcm_strategy(page: Page, site: dict, defaults: dict) -> l
 
 
 async def zoho_recruit_strategy(page: Page, site: dict, defaults: dict) -> list[RawJob]:
-    # a.cw-3-title.cw-bw is the job-title link class used by Zoho Recruit's
-    # standard "Careers" public site template (confirmed against the VinFast
-    # tenant, Aug 2026). Falls back to older guesses in case a tenant is on
-    # a different Zoho template version.
+    # Different Zoho Recruit tenants render with different template class
+    # names - cw-3-title (VinFast) and cw-1-title (Skyroot) both confirmed.
     els = await page.query_selector_all(
-        "a.cw-3-title.cw-bw, a.job-title, div.jobLists a, table a"
+        "a.cw-3-title.cw-bw, a.cw-1-title, a.job-title, div.jobLists a, table a"
     )
     jobs, seen = [], set()
     for el in els:
