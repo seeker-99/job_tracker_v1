@@ -237,8 +237,11 @@ sites:
 
   - id: adobe
     name: "Adobe"
-    url: "https://careers.adobe.com/"
-    ats_type: workday
+    url: "https://careers.adobe.com/us/en/c/engineering-and-product-jobs"
+    ats_type: generic
+    job_card_selector: "a.apply-btn"
+    title_attr: "aria-label"
+    title_attr_strip_prefix: "Apply Now for "
     active: true
 
   - id: thoughtworks
