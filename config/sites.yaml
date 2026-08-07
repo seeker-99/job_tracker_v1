@@ -301,6 +301,8 @@ sites:
     name: "Mastercard"
     url: "https://careers.mastercard.com/us/en/search-results/"
     ats_type: generic
+    job_card_selector: "div.phs-jobs-list li div.information a"
+    title_selector: "span"
     active: true
 
   - id: vinfast
