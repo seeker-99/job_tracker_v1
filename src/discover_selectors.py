@@ -55,6 +55,26 @@ async def discover(site_id: str, headed: bool):
         await page.screenshot(path=str(png_path), full_page=True)
         html_path.write_text(await page.content(), encoding="utf-8")
 
+        # Report any iframes on the page - if job listings are embedded via
+        # an iframe (common for widget-based ATS embeds), normal selectors
+        # won't see inside it and sites.yaml needs iframe_selector or
+        # iframe_url_contains set instead.
+        iframes = await page.query_selector_all("iframe")
+        if iframes:
+            print(f"\n⚠ Found {len(iframes)} <iframe> element(s) on this page:")
+            for idx, ifr in enumerate(iframes):
+                src = await ifr.get_attribute("src") or "(no src)"
+                ifr_id = await ifr.get_attribute("id") or ""
+                ifr_cls = await ifr.get_attribute("class") or ""
+                print(f"  [{idx}] src={src}")
+                if ifr_id:
+                    print(f"       id={ifr_id}  -> could use iframe_selector: \"iframe#{ifr_id}\"")
+                if ifr_cls:
+                    print(f"       class={ifr_cls}")
+                print(f"       -> could use iframe_url_contains: \"{src.split('//')[-1].split('/')[0] if '//' in src else src}\"")
+            print("If jobs are inside one of these, add iframe_selector or iframe_url_contains "
+                  "to this site's sites.yaml entry instead of job_card_selector alone.\n")
+
         # Find anchor tags whose href looks like a job link, grouped by class signature
         anchors = await page.eval_on_selector_all(
             "a",
