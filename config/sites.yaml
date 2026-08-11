@@ -111,6 +111,7 @@ sites:
   - id: ge_aerospace
     name: "GE Aerospace"
     url: "https://careers.geaerospace.com/global/en/search-results?qcountry=India"
+    job_card_selector: "a[data-ph-at-id='job-link']"    
     ats_type: generic
     active: true
 
@@ -135,22 +136,37 @@ sites:
     ats_type: generic
     active: true
 
-  - id: tesla_mokahr
-    name: "Tesla (China/APAC portal)"
-    url: "https://hire-r1.mokahr.com/social-recruitment/tesla/100004142#/"
-    ats_type: mokahr
+  - id: tesla_mokahr_ai_hw
+    name: "Tesla (AI Hardware category)"
+    url: "https://hire-r1.mokahr.com/social-recruitment/tesla/100004142#/jobs?zhineng%5B0%5D=100012016"
+    ats_type: generic
+    job_card_selector: "a.link-txmgVOCVz9"
+    title_selector: "span.title-u2qk9xX9Ie"
+    location_selector: "div.sd-foundation-body-primary-b0MG4"
     active: true
-    notes: "Mokahr is a Chinese ATS with heavy client-side rendering; verify India relevance manually."
+
+  - id: tesla_mokahr_it_ops
+    name: "Tesla (IT Operations category)"
+    url: "https://hire-r1.mokahr.com/social-recruitment/tesla/100004142#/jobs?zhineng%5B0%5D=100012019"
+    ats_type: generic
+    job_card_selector: "a.link-txmgVOCVz9"
+    title_selector: "span.title-u2qk9xX9Ie"
+    location_selector: "div.sd-foundation-body-primary-b0MG4"
+    active: true
 
   - id: ather_energy
     name: "Ather Energy"
     url: "https://careers.atherenergy.com/jobs"
     ats_type: generic
-    active: true
+    job_card_selector: "a[href^='/job/']"
+    title_selector: "div.title-box div:first-child"
+    location_selector: "div.title-box div:nth-child(2)"
+    active: trueactive: true
 
   - id: uber
     name: "Uber"
     url: "https://jobs.uber.com/en/jobs/?countries=India"
+    job_card_selector: "a.js-view-job"
     ats_type: generic
     active: true
 
@@ -164,6 +180,9 @@ sites:
   - id: google_careers
     name: "Google"
     url: "https://www.google.com/about/careers/applications/jobs/results/?location=India&target_level=EARLY&target_level=MID&degree=BACHELORS&employment_type=FULL_TIME&sort_by=date"
+    job_card_selector: "div[jsdata^='Aiqs8c']"
+    title_selector: "h3.QJPWVe"
+    location_selector: ".wVoYLb .r0wTof"
     ats_type: generic
     active: true
 
@@ -201,6 +220,9 @@ sites:
   - id: dassault_3ds
     name: "Dassault Systemes (3DS)"
     url: "https://www.3ds.com/careers/jobs?woc=%257B%2522country%2522%253A%255B%2522country%252FIndia%2522%255D%257D"
+    job_card_selector: "div.ds-jobs-card"
+    title_selector: "div.job-card-title"
+    location_selector: "div.job-card-place div:last-child"
     ats_type: generic
     active: true
 
@@ -357,6 +379,7 @@ sites:
   - id: apple
     name: "Apple"
     url: "https://jobs.apple.com/en-in/search?location=india-INDC"
+    job_card_selector: "a[href*='/details/']"
     ats_type: generic
     active: true
 
