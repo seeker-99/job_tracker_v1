@@ -3,7 +3,8 @@ name: Daily Job Tracker
 on:
   schedule:
     # 11:00 IST = 05:30 UTC (IST has no DST, so this offset is constant)
-    - cron: "30 5 * * *"
+    - cron: "30 2 * * *"
+    - cron: "30 12 * * *"
   workflow_dispatch: {}   # allows manual "Run workflow" button for testing
 
 permissions:
