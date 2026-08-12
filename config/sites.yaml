@@ -161,7 +161,7 @@ sites:
     job_card_selector: "a[href^='/job/']"
     title_selector: "div.title-box div:first-child"
     location_selector: "div.title-box div:nth-child(2)"
-    active: trueactive: true
+    active: true
 
   - id: uber
     name: "Uber"
