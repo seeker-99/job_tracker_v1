@@ -74,10 +74,21 @@ roles:
   exclude_keywords:
     - "human resources"
     - "hr business partner"
-    - "sales executive"
-    - "account executive"
-    - "finance analyst"
-    - "accounts payable"
+    - "sales"
+    - "accounting"
+    - "finance"
+    - "accounts"
+    - "staff"
+    - "marketing"
+    - "purchasing"
+    - "excelher"
+    - "apprentice"
+    - "intern"
+    - "manager"
+    - "cybersecurity"
+    - "tax"
+    - "lead"
+    - "architect"
     - "marketing manager"
     - "legal counsel"
     - "recruiter"
@@ -85,8 +96,7 @@ roles:
     - "ux designer"
     - "ui designer"
     - "user experience designer"
-    - "product designer"
-  experience_years: [3, 7]
+  experience_years: [2, 5]
 
 locations:
   country_default: "India"
