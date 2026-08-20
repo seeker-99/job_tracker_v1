@@ -28,6 +28,7 @@ defaults:
   link_attr: "href"
 
 roles:
+  filter_mode: exclude_only
   priority_keywords:
     - "data scientist"
     - "senior data scientist"
@@ -80,6 +81,11 @@ roles:
     - "marketing manager"
     - "legal counsel"
     - "recruiter"
+    - "ux design"
+    - "ux designer"
+    - "ui designer"
+    - "user experience designer"
+    - "product designer"
   experience_years: [3, 7]
 
 locations:
