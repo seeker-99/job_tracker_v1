@@ -149,6 +149,60 @@ sites:
     location_selector: "span.job--table--locationItem"
     active: true
 
+  - id: dth_avature
+    name: "DTH / Deutsche Aviation (Avature)"
+    url: "https://dth.avature.net/en_US/careers/SearchJobs/?756=59289755&756_format=198542&listFilterMode=1&jobSort=postedDate&jobSortDirection=ASC&jobOffset=0"
+    ats_type: avature
+    active: true
+
+  - id: southwest
+    name: "Southwest Airlines"
+    url: "https://careers.southwestair.com/in/en/search-results?keywords=india"
+    ats_type: generic
+    active: true
+
+  - id: united
+    name: "United Airlines"
+    url: "https://careers.united.com/us/en/search-results?keywords=india"
+    ats_type: generic
+    active: true
+
+  - id: acron_aviation_blr
+    name: "Acron Aviation (Bengaluru filter)"
+    url: "https://jobs.lever.co/acronaviation?location=Bengaluru"
+    ats_type: generic
+    job_card_selector: "a.posting-title"
+    title_selector: "h5"
+    location_selector: "span.sort-by-location"
+    active: true
+
+  - id: lufthansa_technik
+    name: "Lufthansa Technik Services India"
+    url: "https://careerspage.io/lufthansa-technik-services-india"
+    ats_type: generic
+    active: true
+    
+  - id: autodesk
+    name: "Autodesk"
+    url: "https://autodesk.wd1.myworkdayjobs.com/Ext?State_Region=701eb5584934425d930bc84b9e8b04eb&State_Region=a3c37012f51642f4a7b3dafc8ac37801"
+    ats_type: workday
+    active: true
+
+  - id: perceptyne
+    name: "Perceptyne"
+    url: "https://perceptyne.keka.com/careers"
+    ats_type: generic
+    active: true
+
+  - id: acron_aviation
+    name: "Acron Aviation"
+    url: "https://jobs.lever.co/acronaviation"
+    ats_type: generic
+    job_card_selector: "a.posting-title"
+    title_selector: "h5"
+    location_selector: "span.sort-by-location"
+    active: true
+    
   - id: rtx
     name: "RTX (Raytheon)"
     url: "https://careers.rtx.com/global/en/search-results?keywords=india&from=50&s=1"
