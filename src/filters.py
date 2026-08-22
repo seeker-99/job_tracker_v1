@@ -1,10 +1,44 @@
 """Role & location relevance filtering."""
 import re
 
+# Generic non-job text that commonly leaks through when a site's selector
+# is slightly too broad (nav links, pagination, legal/footer links). These
+# are filtered out regardless of filter_mode, since they're never real job
+# titles on any site.
+_JUNK_EXACT = {
+    "english", "privacy notice", "eeo policy", "terms of use", "cookie policy",
+    "open roles", "skip to jobs search results", "g & a", "join talent community",
+    "browse careers", "careers home", "our history", "culture", "benefits",
+    "students", "military", "pilots", "events", "view all", "apply now",
+    "login", "sign in", "all jobs", "home", "menu", "search", "filter",
+    "next", "previous", "load more", "show more",
+}
+
+
+def _looks_like_junk(title: str) -> bool:
+    t = title.strip().lower()
+    if not t:
+        return True
+    if t in _JUNK_EXACT:
+        return True
+    # Pure numbers / pagination controls (e.g. "1", "2", "5")
+    if re.fullmatch(r"\d{1,3}", t):
+        return True
+    # Single short word with no letters suggesting a real job title
+    # (real titles are almost always 2+ words, or one long compound word)
+    word_count = len(t.split())
+    if word_count == 1 and len(t) < 8:
+        return True
+    return False
+
 
 def is_relevant(title: str, location: str, roles_cfg: dict, locations_cfg: dict) -> bool:
     if not title:
         return False
+
+    if _looks_like_junk(title):
+        return False
+
     t = title.lower()
 
     # Always exclude unwanted categories regardless of mode.
@@ -13,24 +47,17 @@ def is_relevant(title: str, location: str, roles_cfg: dict, locations_cfg: dict)
             return False
 
     filter_mode = roles_cfg.get("filter_mode", "include_priority")
-    # "include_priority" (original behavior): title must match one of
-    #   priority_keywords / include_keywords to pass.
-    # "exclude_only" (relaxed): anything not caught by exclude_keywords
-    #   passes - broadens results a lot, useful for smaller companies
-    #   whose roles don't fit a fixed keyword list (e.g. Ather's "Test
-    #   Engineer" wouldn't match "software engineer" etc.)
     if filter_mode == "include_priority":
         matched_role = any(kw.lower() in t for kw in roles_cfg.get("priority_keywords", [])) or \
             any(kw.lower() in t for kw in roles_cfg.get("include_keywords", []))
         if not matched_role:
             return False
-    # else: exclude_only mode - already passed the exclude check above, so proceed.
+    # else: exclude_only mode - already passed the junk + exclude checks above.
 
     if location:
         loc = location.lower()
         preferred = [c.lower() for c in locations_cfg.get("preferred_cities", [])]
         if preferred and not any(city in loc for city in preferred):
-            # Location present but doesn't match India / preferred cities -> exclude
             return False
 
     return True
