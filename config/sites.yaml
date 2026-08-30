@@ -273,6 +273,68 @@ sites:
     active: true
     notes: "India country filter removed per instructions; role/location filtering still applied downstream."
 
+  - id: indigo
+    name: "IndiGo"
+    url: "https://www.goindigo.in/careers/job-search.html?type=&location=&department=Engineering"
+    job_card_selector: "a.card-head--title"    
+    ats_type: generic
+    active: true
+
+  - id: hsbc
+    name: "HSBC"
+    url: "http://portal.careers.hsbc.com/careers?location=India&department=Technology&pid=563774610998339&domain=hsbc.com&sort_by=relevance&triggerGoButton=false"
+    ats_type: generic
+    job_card_selector: "a.apply-btn"
+    title_attr: "aria-label"
+    title_attr_strip_prefix: "Apply Now for "
+    active: true
+
+  - id: nike
+    name: "Nike"
+    url: "https://careers.nike.com/jobs?location_name=India&location_type=4&filter%5Bcategory%5D%5B0%5D=Software%20Engineering&filter%5Bcategory%5D%5B1%5D=Machine%20Learning&filter%5Bcategory%5D%5B2%5D=Manufacturing%20%26%20Engineering&filter%5Bcategory%5D%5B3%5D=Information%20Technology&filter%5Bcategory%5D%5B4%5D=Data"
+    ats_type: generic
+    job_card_selector: "a.results-list__item-title--link"
+    active: true
+
+  - id: exxonmobil
+    name: "ExxonMobil"
+    url: "https://jobs.exxonmobil.com/search/?createNewAlert=false&q=&locationsearch=india&optionsFacetsDD_department=&optionsFacetsDD_shifttype=&optionsFacetsDD_country=IN"
+    ats_type: generic
+    job_card_selector: "a.jobTitle-link"
+    active: true
+
+  - id: mercedes_benz
+    name: "Mercedes-Benz"
+    url: "https://jobs.mercedes-benz.com/en?en=&PositionLocation.Country=%5B390%5D&CareerLevel.Code=%5B13%5D&JobCategory.Code=%5B46%2C42%5D"
+    ats_type: generic
+    job_card_selector: "a.mjp-job-ad-card__link"
+    title_selector: "span.mjp-job-ad-card__title-text"
+    location_selector: "span.mjp-at-most-two-lines"
+    posted_date_selector: "span.mjp-at-most-one-line"
+    active: true
+
+  - id: puma
+    name: "Puma"
+    url: "https://about.puma.com/en/careers/job-openings?area=all&location=81&team=885%2C886%2C893%2C899%2C900%2C898"
+    ats_type: generic
+    job_card_selector: "a.card"
+    title_selector: "div.card__title"
+    location_selector: "div.card__location"
+    active: true
+
+  - id: ford
+    name: "Ford"
+    url: "https://www.careers.ford.com/search-jobs?ac=&Country=1269750&State=&k=&orgIds=48560"
+    ats_type: generic
+    active: true
+
+  - id: marvell
+    name: "Marvell"
+    url: "https://marvell.wd1.myworkdayjobs.com/MarvellCareers?Country=c4f78be1a8f14da0ab49ce1162348a5e"
+    ats_type: workday
+    job_card_selector: "a.css-19uc56f"
+    active: true
+    
   - id: bosch
     name: "Bosch"
     url: "https://jobs.bosch.com/en?country=in&pages=1"
