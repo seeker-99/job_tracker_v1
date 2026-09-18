@@ -22,7 +22,7 @@ Design notes (read this before extending):
 import asyncio
 from dataclasses import dataclass, field
 from typing import Optional
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse, parse_qs, unquote_plus
 
 from playwright.async_api import async_playwright, Page, BrowserContext, TimeoutError as PWTimeout
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
@@ -60,8 +60,6 @@ async def new_context(pw_browser) -> BrowserContext:
         viewport={"width": 1440, "height": 900},
         locale="en-IN",
     )
-    # Lightweight stealth: hide webdriver flag without requiring the
-    # playwright-stealth package to be perfectly in sync with browser version.
     await ctx.add_init_script(
         "Object.defineProperty(navigator, 'webdriver', {get: () => undefined});"
     )
@@ -76,23 +74,16 @@ async def _settle(page: Page, wait_strategy: str, timeout_ms: int, extra_wait_ms
     await page.wait_for_timeout(extra_wait_ms)
 
 
-# If a card has no explicit title_selector configured, try these narrower
-# candidates first (in order) before falling back to the whole card's text.
-# This avoids swallowing a full job-description blob into the title when
-# the "card" element is a large wrapper with no newline to split on.
 _TITLE_FALLBACK_SELECTORS = [
     "h1", "h2", "h3", "h4", "h5",
     "[class*='title' i]", "[class*='job-name' i]", "[class*='position' i]",
     "strong", "b",
 ]
 
-MAX_TITLE_LEN = 140  # safety net: a real job title is never this long
+MAX_TITLE_LEN = 140
 
 
 def _clean_title(raw: str) -> str:
-    # Collapse all whitespace/newlines to single spaces, take the first
-    # sentence-like chunk, then hard-truncate as a last resort so a
-    # mis-scoped selector can never dump a whole description into the title.
     collapsed = " ".join(raw.split())
     first_line = raw.split("\n")[0].strip()
     candidate = first_line if 0 < len(first_line) < len(collapsed) else collapsed
@@ -102,17 +93,6 @@ def _clean_title(raw: str) -> str:
 
 
 async def _get_scrape_target(page: Page, site: dict):
-    """
-    Returns the Playwright object to query for job cards: either the page
-    itself, or - if this site's jobs are rendered inside an <iframe> (common
-    for embedded ATS widgets, e.g. an embedded Greenhouse/Lever board) - the
-    Frame object for that iframe. Frame has the same query_selector_all API
-    as Page, so callers don't need to know which one they got.
-
-    Configure in sites.yaml with EITHER:
-      iframe_selector: "iframe#careers-widget"       (CSS selector of the <iframe> tag)
-      iframe_url_contains: "boards.greenhouse.io"     (substring to match the iframe's src)
-    """
     iframe_sel = site.get("iframe_selector")
     iframe_url_contains = site.get("iframe_url_contains")
 
@@ -139,12 +119,12 @@ async def generic_strategy(page: Page, site: dict, defaults: dict) -> list[RawJo
     card_sel = site.get("job_card_selector") or defaults["job_card_selector"]
     title_sel = site.get("title_selector") or defaults.get("title_selector")
     location_sel = site.get("location_selector") or defaults.get("location_selector")
-    # Some platforms (e.g. Phenom People, used by Adobe/Gartner/Stryker career
-    # sites) put the real job title in an element attribute rather than in
-    # visible text - e.g. aria-label="Apply Now for <Job Title>". Configure
-    # title_attr + title_attr_strip_prefix in sites.yaml to handle this.
+    posted_date_sel = site.get("posted_date_selector")
     title_attr = site.get("title_attr")
     title_attr_strip_prefix = site.get("title_attr_strip_prefix", "")
+    # Some sites (e.g. torqueagi) put the title in a URL query parameter
+    # instead of visible text or an attribute - e.g. href="...?position=Job%20Title".
+    title_url_param = site.get("title_url_param")  # e.g. "position"
 
     target = await _get_scrape_target(page, site)
     base_url = getattr(target, "url", page.url)
@@ -155,7 +135,6 @@ async def generic_strategy(page: Page, site: dict, defaults: dict) -> list[RawJo
     for card in cards:
         href = await card.get_attribute("href")
         if not href:
-            # container element rather than anchor - look for a nested link
             inner = await card.query_selector("a")
             href = await inner.get_attribute("href") if inner else None
         if not href:
@@ -166,7 +145,13 @@ async def generic_strategy(page: Page, site: dict, defaults: dict) -> list[RawJo
         seen_links.add(link)
 
         title = ""
-        if title_attr:
+        if title_url_param:
+            qs = parse_qs(urlparse(link).query)
+            values = qs.get(title_url_param)
+            if values:
+                title = unquote_plus(values[0]).strip()
+
+        if not title and title_attr:
             raw_attr = (await card.get_attribute(title_attr)) or ""
             if title_attr_strip_prefix and raw_attr.startswith(title_attr_strip_prefix):
                 raw_attr = raw_attr[len(title_attr_strip_prefix):]
@@ -178,7 +163,6 @@ async def generic_strategy(page: Page, site: dict, defaults: dict) -> list[RawJo
                 title = (await title_el.inner_text()).strip()
 
         if not title:
-            # Try narrower fallback selectors before resorting to full card text
             for fallback_sel in _TITLE_FALLBACK_SELECTORS:
                 el = await card.query_selector(fallback_sel)
                 if el:
@@ -198,8 +182,14 @@ async def generic_strategy(page: Page, site: dict, defaults: dict) -> list[RawJo
             if loc_el:
                 location = (await loc_el.inner_text()).strip()
 
+        posted_date = ""
+        if posted_date_sel:
+            date_el = await card.query_selector(posted_date_sel)
+            if date_el:
+                posted_date = (await date_el.inner_text()).strip()
+
         if title:
-            jobs.append(RawJob(title=title, link=link, location=location))
+            jobs.append(RawJob(title=title, link=link, location=location, posted_date=posted_date))
     return jobs
 
 
@@ -227,7 +217,6 @@ async def greenhouse_strategy(page: Page, site: dict, defaults: dict) -> list[Ra
 
 
 async def workday_strategy(page: Page, site: dict, defaults: dict) -> list[RawJob]:
-    # Workday job postings render as <a data-automation-id="jobTitle">
     els = await page.query_selector_all("a[data-automation-id='jobTitle']")
     jobs = []
     for el in els:
@@ -236,7 +225,6 @@ async def workday_strategy(page: Page, site: dict, defaults: dict) -> list[RawJo
         if not href or not title:
             continue
         link = urljoin(page.url, href)
-        # location often sits in a sibling with data-automation-id='subtitle'
         location = ""
         try:
             container = await el.evaluate_handle(
@@ -268,8 +256,6 @@ async def oracle_cloud_hcm_strategy(page: Page, site: dict, defaults: dict) -> l
 
 
 async def zoho_recruit_strategy(page: Page, site: dict, defaults: dict) -> list[RawJob]:
-    # Different Zoho Recruit tenants render with different template class
-    # names - cw-3-title (VinFast) and cw-1-title (Skyroot) both confirmed.
     els = await page.query_selector_all(
         "a.cw-3-title.cw-bw, a.cw-1-title, a.job-title, div.jobLists a, table a"
     )
@@ -280,7 +266,7 @@ async def zoho_recruit_strategy(page: Page, site: dict, defaults: dict) -> list[
         if not href or not title or href in seen:
             continue
         if title.upper() == "LOGIN" or "candidateportal" in href:
-            continue  # skip the login link that matches the same broad selector
+            continue
         seen.add(href)
         jobs.append(RawJob(title=title, link=urljoin(page.url, href)))
     return jobs
@@ -313,7 +299,6 @@ async def avature_strategy(page: Page, site: dict, defaults: dict) -> list[RawJo
 
 
 async def mokahr_strategy(page: Page, site: dict, defaults: dict) -> list[RawJob]:
-    # Mokahr renders a SPA; job cards typically use a data-v-* wrapper.
     els = await page.query_selector_all("div[class*='job-item'] a, li[class*='job'] a, a[href*='position']")
     jobs, seen = [], set()
     for el in els:
@@ -335,7 +320,7 @@ STRATEGIES = {
     "darwinbox": darwinbox_strategy,
     "avature": avature_strategy,
     "mokahr": mokahr_strategy,
-    "linkedin": None,  # intentionally unsupported, see sites.yaml notes
+    "linkedin": None,
 }
 
 
