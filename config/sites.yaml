@@ -140,6 +140,14 @@ sites:
     ats_type: generic
     active: true
 
+  - id: torqueagi
+    name: "Torque AGI"
+    url: "https://www.torqueagi.com/careers#open-positions"
+    ats_type: generic
+    job_card_selector: "a.nhc-job-apply"
+    title_url_param: "position"
+    active: true
+    
   - id: volvo_group
     name: "Volvo Group"
     url: "https://jobs.volvogroup.com/?locale=en_US"
