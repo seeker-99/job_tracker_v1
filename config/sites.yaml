@@ -166,6 +166,13 @@ sites:
     location_selector: "span.sort-by-location"
     active: true
 
+  - id: volkswagen_sf
+    name: "Volkswagen (SuccessFactors)"
+    url: "https://career10.successfactors.com/career?company=volkswag04&career%5fns=job%5flisting%5fsummary&navBarLevel=JOB%5fSEARCH&site=VjItRnhuMkZIVFNnOWZ0c1djNGhmTjlZdz09&_s.crb=61dkYppWMa71c7fqAMgJpbOcEtMPnzcROGFT1FSF7kA%3d"
+    ats_type: generic
+    job_card_selector: "a.jobTitle"
+    active: true
+    
   - id: acron_aviation_blr
     name: "Acron Aviation (Bengaluru filter)"
     url: "https://jobs.lever.co/acronaviation?location=Bengaluru"
