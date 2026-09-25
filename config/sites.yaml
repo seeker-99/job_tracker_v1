@@ -147,6 +147,48 @@ sites:
     job_card_selector: "a.nhc-job-apply"
     title_url_param: "position"
     active: true
+
+  - id: graymatter_robotics
+    name: "Gray Matter Robotics"
+    url: "https://jobs.ashbyhq.com/graymatter-robotics"
+    ats_type: generic
+    job_card_selector: "a._container_j2da7_1"
+    title_selector: "h3.ashby-job-posting-brief-title"
+    wait_strategy: load
+    extra_wait_ms: 15000
+    wait_timeout_ms: 60000
+    active: true
+
+  - id: daimler_truck
+    name: "Daimler Truck"
+    url: "https://jobsearch.daimlertruck.com/index.php?ac=search_result&search_criterion_country%5B%5D=81&search_criterion_channel%5B%5D=12&restoreLastSearch=1&language=2"
+    ats_type: generic
+    job_card_selector: "a[href*='ac=jobad']"
+    active: true
+
+  - id: skild_ai
+    name: "Skild AI"
+    url: "https://www.skild.ai/career"
+    ats_type: generic
+    job_card_selector: "div.careers-job"
+    title_selector: "h4.job_title"
+    active: true
+    
+  - id: revolut
+    name: "Revolut"
+    url: "https://www.revolut.com/en-IN/careers/?city=India+-+Remote"
+    ats_type: generic
+    job_card_selector: "a[href*='/en-IN/careers/position/']"
+    title_selector: "h2"
+    active: true
+
+  - id: anduril
+    name: "Anduril Industries"
+    url: "https://www.anduril.com/open-roles?location=remote"
+    ats_type: generic
+    job_card_selector: "a[href*='boards.greenhouse.io']"
+    title_attr: "aria-label"
+    active: true
     
   - id: volvo_group
     name: "Volvo Group"
