@@ -159,6 +159,44 @@ sites:
     wait_timeout_ms: 60000
     active: true
 
+  - id: threem
+    name: "3M"
+    url: "https://3m.wd1.myworkdayjobs.com/en/Search?Location_Country=c4f78be1a8f14da0ab49ce1162348a5e&jobFamilyGroup=e937e224196b1066cb46867a8c809ea6&jobFamilyGroup=e937e224196b1066cb468414c1519e8e&jobFamilyGroup=e937e224196b1066cb46855288e09e9c&jobFamilyGroup=e937e224196b1066cb468878e95c9ebe&jobFamilyGroup=e937e224196b1066cb4687745a229eb2&jobFamilyGroup=e937e224196b1066cb4685a5cb279e9e"
+    ats_type: workday
+    active: true
+
+  - id: dover
+    name: "Dover"
+    url: "https://dover.wd103.myworkdayjobs.com/en-US/Dover?locations=fd26dd94fa9b10011f54c6ccf4c50000&locations=fd26dd94fa9b10011f511de99c700000"
+    ats_type: workday
+    active: true
+
+  - id: linde
+    name: "Linde"
+    url: "https://linde.csod.com/ux/ats/careersite/25/home?c=linde&country=in"
+    ats_type: generic
+    job_card_selector: "a[data-tag='displayJobTitle']"
+    extra_wait_ms: 8000
+    active: true
+
+  - id: le_india_peoplestrong
+    name: "LE India (PeopleStrong)"
+    url: "https://leindiacareers.peoplestrong.com/job/joblist"
+    ats_type: generic
+    job_card_selector: "a[data-testid^='joblist-a-job-jobtitle']"
+    extra_wait_ms: 8000
+    active: true
+
+  - id: mercedes_benz_2
+    name: "Mercedes-Benz (broader categories)"
+    url: "https://jobs.mercedes-benz.com/en?en=&PositionLocation.Country=%5B390%5D&JobCategory.Code=%5B46%2C43%2C42%2C38%5D"
+    ats_type: generic
+    job_card_selector: "a.mjp-job-ad-card__link"
+    title_selector: "span.mjp-job-ad-card__title-text"
+    location_selector: "span.mjp-at-most-two-lines"
+    posted_date_selector: "span.mjp-at-most-one-line"
+    active: true
+
   - id: daimler_truck
     name: "Daimler Truck"
     url: "https://jobsearch.daimlertruck.com/index.php?ac=search_result&search_criterion_country%5B%5D=81&search_criterion_channel%5B%5D=12&restoreLastSearch=1&language=2"
