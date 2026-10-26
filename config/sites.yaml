@@ -219,10 +219,8 @@ sites:
 
   - id: skild_ai
     name: "Skild AI"
-    url: "https://www.skild.ai/career"
-    ats_type: generic
-    job_card_selector: "div.careers-job"
-    title_selector: "h4.job_title"
+    url: "https://job-boards.greenhouse.io/skildai-careers"
+    ats_type: greenhouse
     active: true
     
   - id: revolut
@@ -252,7 +250,7 @@ sites:
 
   - id: acron_aviation
     name: "Acron Aviation"
-    url: "https://jobs.lever.co/acronaviation"
+    url: "https://jobs.lever.co/acronaviation?location=Bengaluru"
     ats_type: generic
     job_card_selector: "a.posting-title"
     title_selector: "h5"
