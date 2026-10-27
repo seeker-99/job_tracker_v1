@@ -148,6 +148,14 @@ sites:
     title_url_param: "position"
     active: true
 
+  - id: thales
+    name: "Thales"
+    url: "https://careers.thalesgroup.com/global/en/search-results?qcountry=India"
+    ats_type: generic
+    job_card_selector: "a[data-ph-at-id='job-link']"
+    title_attr: "data-ph-at-job-title-text"
+    active: true
+    
   - id: graymatter_robotics
     name: "Gray Matter Robotics"
     url: "https://jobs.ashbyhq.com/graymatter-robotics"
