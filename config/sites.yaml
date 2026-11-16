@@ -410,12 +410,12 @@ sites:
     job_card_selector: "a.results-list__item-title--link"
     active: true
 
-  - id: exxonmobil
-    name: "ExxonMobil"
-    url: "https://jobs.exxonmobil.com/search/?createNewAlert=false&q=&locationsearch=india&optionsFacetsDD_department=&optionsFacetsDD_shifttype=&optionsFacetsDD_country=IN"
-    ats_type: generic
-    job_card_selector: "a.jobTitle-link"
-    active: true
+#  - id: exxonmobil
+#   name: "ExxonMobil"
+#    url: "https://jobs.exxonmobil.com/search/?createNewAlert=false&q=&locationsearch=india&optionsFacetsDD_department=&optionsFacetsDD_shifttype=&optionsFacetsDD_country=IN"
+#    ats_type: generic
+#    job_card_selector: "a.jobTitle-link"
+#    active: true
 
   - id: mercedes_benz
     name: "Mercedes-Benz"
