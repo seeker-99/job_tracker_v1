@@ -436,11 +436,11 @@ sites:
     location_selector: "div.card__location"
     active: true
 
-  - id: ford
-    name: "Ford"
-    url: "https://www.careers.ford.com/search-jobs?ac=&Country=1269750&State=&k=&orgIds=48560"
-    ats_type: generic
-    active: true
+  # - id: ford
+    # name: "Ford"
+    # url: "https://www.careers.ford.com/search-jobs?ac=&Country=1269750&State=&k=&orgIds=48560"
+    # ats_type: generic
+    # active: true
 
   - id: marvell
     name: "Marvell"
@@ -613,11 +613,11 @@ sites:
     ats_type: generic
     active: true
 
-  - id: alstom
-    name: "Alstom"
-    url: "https://jobsearch.alstom.com/search/"
-    ats_type: generic
-    active: true
+  # - id: alstom
+    # name: "Alstom"
+    # url: "https://jobsearch.alstom.com/search/"
+    # ats_type: generic
+    # active: true
 
   - id: gm
     name: "General Motors"
